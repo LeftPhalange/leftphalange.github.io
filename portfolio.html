@@ -13,7 +13,7 @@
     <title>Ethan Bovard's Personal Website</title>
 </head>
 
-<body class="d-flex h-100 text-center text-white bg-dark">
+<body class="text-center text-white bg-dark">
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header class="mb-auto">
             <nav class="navbar navbar-expand-lg navbar-dark">
@@ -41,46 +41,68 @@
             <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 justify-content-between">
                 <h1>My portfolio</h1>
                 <p class="lead">Projects that I've worked on.</p>
-            </div>
-            <div class="d-md-flex flex-md-equal w-100" style="margin-bottom: 10%;">
-                <div style="text-align: left;">
-                    <h3>Solace Weather (SwiftUI, Combine)</h1>
-                    <p>Stay a step ahead of the weather. Blend the weather with the madness that is your calendar and
-                        find solace in it. This slick, new weather app takes advantage of the new SwiftUI framework and
-                        Combine library by Apple for a reactive and beautiful way to track the weather outside.</p>
+                <!-- Latest projects -->
+                <h4 style="text-align:left;margin-top:2%;margin-bottom:2%">Latest projects</h4>
+                <div class="card-deck">
+                    <div class="card bg-dark">
+                        <img class="card-img-top" src="./tap_news_ss.png" alt="Tap News">
+                        <div class="card-body">
+                          <h5 class="card-title">Tap News</h5>
+                          <p class="card-text">An Android app that displays news, weather, and traffic information all in one place. Built in Java and Kotlin.</p>
+                          <a href="https://github.com/LeftPhalange/Tap_News" class="btn btn-primary">View on GitHub</a>
+                        </div>
+                    </div>
+                    <div class="card bg-dark">
+                        <img class="card-img-top" src="./foray_ss.png" alt="Foray">
+                        <div class="card-body">
+                          <h5 class="card-title">Foray</h5>
+                          <p class="card-text">iOS project that provides communities geared toward particular interests. Developed in SwiftUI and Combine for HackGSU Fall 2020, using Microsoft Azure for backend technologies.</p>
+                          <a href="https://devpost.com/software/foray" class="btn btn-primary">View it on Devpost</a>
+                        </div>
+                    </div>
+                    <div class="card bg-dark">
+                        <img class="card-img-top" src="./dphotos_ss.png" alt="DPhotos">
+                        <div class="card-body">
+                          <h5 class="card-title">DPhotos</h5>
+                          <p class="card-text">Stock photo distribution web application that accepts the Ethereum cryptocurrency via Web3.js.</p>
+                          <a href="https://github.com/LeftPhalange/DPhotos" class="btn btn-primary">View it on GitHub</a>
+                        </div>
+                    </div>
                 </div>
-                <div style="margin-left: 5%;">
-                    <img src="./assets/daily_card.png" width=350 height=199 alt="Solace Weather's daily forecast card">
-                </div>
+                <!-- Other projects -->
+                <h4 style="text-align:left;margin-top:2%;margin-bottom:2%">Other projects</h4>
+                <div class="card-deck">
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                          <h5 class="card-title">simple_trivia_game</h5>
+                          <p class="card-text">.NET Core trivia game written in C#, using the Open Trivia DB to fetch mind-boggling trivia.</p>
+                          <a href="https://github.com/LeftPhalange/simple_trivia_game" class="btn btn-primary">View on GitHub</a>
+                        </div>
+                    </div>
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                          <h5 class="card-title">SeatgeekExample</h5>
+                          <p class="card-text">iOS app written in Swift and UIKit that fetches upcoming events based on the Seatgeek service.</p>
+                          <a href="https://github.com/LeftPhalange/SeatGeekExample" class="btn btn-primary">View it on Github</a>
+                        </div>
+                    </div>
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                          <h5 class="card-title">TWCDotNet</h5>
+                          <p class="card-text">C# API wrapper that uses The Weather Company/IBM's endpoints to retrieve weather information.</p>
+                          <a href="https://github.com/LeftPhalange/TWCDotNet" class="btn btn-primary">View it on Github</a>
+                        </div>
+                    </div>
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                          <h5 class="card-title">SHAshestoashes</h5>
+                          <p class="card-text">SHA1 decryption program made in Python.</p>
+                          <a href="https://github.com/LeftPhalange/SHAshestoashes" class="btn btn-primary">View it on Github</a>
+                        </div>
+                    </div>
+                </div>            
             </div>
-            <div class="d-md-flex flex-md-equal w-100" style="margin-bottom: 10%;">
-                <div style="margin-right: 2%;">
-                    <img src="./assets/blockify_window.png" width=474 height=315 alt="Main window of Blockify">
-                </div>
-                <div style="text-align: right;">
-                    <h3>Blockify for Discord (C#, Windows Forms)</h1>
-                    <p>Convey small text into big and bold characters for people to see on Discord. This neat companion
-                        tool simplifies the process of converting plaintext to regional indicators.</p>
-                </div>
-            </div>
-            <div style="margin-top: 4%">
-                <h3>Foray (SwiftUI, Combine)</h1>
-                <p>An interest-driven social networking application submitted to HackGSU 2020, and was presented to
-                    Microsoft, Diversified, and State Farm. It was a valuable learning experience integrating the native
-                    Swift codebase at the frontend, to our Azure-based SQL database.</p>
-                <a href="https://devpost.com/software/foray"><button type="button" class="btn btn-primary">Check it out at Devpost</button></a>
-                <a href="https://github.com/LeftPhalange/Foray"><button type="button" class="btn btn-secondary">Check it out at GitHub</button></a>
-            </div>
-            <div class="d-md-flex flex-md-equal w-100 justify-content-between" style="margin-top: 5%; margin-bottom: 5%;">
-                <img
-                    src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/001/293/294/datas/gallery.jpg" />
-                <img
-                    src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/001/293/297/datas/gallery.jpg" />
-                <img
-                    src="https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/001/293/296/datas/gallery.jpg" />
-            </div>
-            <!-- Footer for some reason falls short in padding on this page... will give it 1% of padding-bottom -->
-            <footer class="mt-auto text-white-50 bg-gradient-dark text-center" style="padding-bottom:1%">
+            <footer class="mt-auto text-white-50 bg-gradient-dark text-center" style="position: relative; min-height: 100%">
                 <p>Website based on the Cover template from <a href="https://getbootstrap.com/"
                         class="text-white">Bootstrap</a>, by <a href="https://twitter.com/mdo" class="text-white">@mdo.</a> Copyright © Ethan Bovard, 2020.
                 </p>
@@ -94,7 +116,6 @@
                     </a>
                 </div>
             </footer>
-        </div>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

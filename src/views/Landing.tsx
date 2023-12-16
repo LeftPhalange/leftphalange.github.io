@@ -13,7 +13,7 @@ function Landing() {
           An eventual goal in my career is to work on things that are of large scale and that have the greatest positive impact that empowers
           any user.
         </span>
-        <div className="flex-row space-x-4">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <Button url="/Resume_Portfolio.pdf" text="View resume" color="bg-blue-600" />
           <Button url="https://linkedin.com/in/ethan-bovard" text="View LinkedIn profile" color="bg-blue-800" />
         </div>

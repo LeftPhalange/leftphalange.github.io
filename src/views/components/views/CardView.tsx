@@ -40,8 +40,8 @@ function processComponent(type: string, contents: any) {
             <div className="flex-1 flex-row">
                 <div className="flex flex-row space-x-4 items-center">
                     <img src={contents["logo"]} className="w-12 h-12" />
-                    <div className="grid grid-rows-2 max-w-full">
-                        <span className="text-xl font-semibold">{contents["name"]}</span>
+                    <div className="flex flex-col max-w-full">
+                        <span className="text-xl font-semibold w-fit">{contents["name"]}</span>
                         <span className="text-base">
                             {returnLink(contents.subheading.value)} • 🗓️ {contents.dates.join(" - ")}
                         </span>

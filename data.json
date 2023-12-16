@@ -1,0 +1,108 @@
+{
+    "sections": [
+        {
+            "title": "💻 Work experience",
+            "components": [
+                {
+                    "type": "heading",
+                    "contents": {
+                        "logo": "/logos/itential.svg",
+                        "name": "Itential",
+                        "subheading": {
+                            "type": "plain",
+                            "value": "Software Engineer"
+                        },
+                        "dates": [
+                            "August 2021",
+                            "Now"
+                        ]
+                    }
+                },
+                {
+                    "type": "body",
+                    "contents": {
+                        "accomplishments": [
+                            "Developed and extended product functionality using JavaScript and Node.js across different customer engagements with large scale organizations as Johnson & Johnson, Lumen Enterprise, and Verizon Wireless.",
+                            "Attained a noteworthy 79% reduction in Nokia to Ciena 5G router migration time through the strategic implementation of parallelism in Python-based parser code during a Verizon Wireless engagement",
+                            "Assisted in an effort to optimize a GitLab CI/CD pipeline by contributing to the transition of the Kubernetes runner from Argo CI to Alpine Linux including the migration of essential features, such as semantic versioning, schema validation, and automated unit testing."
+                        ],
+                        "technologies": [
+                            {
+                                "imageUrl": "/logos/nodejs.svg",
+                                "altText": "Node.js",
+                                "url": "https://nodejs.org"
+                            },
+                            {
+                                "imageUrl": "/logos/javascript.svg",
+                                "altText": "JavaScript",
+                                "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+                            },
+                            {
+                                "imageUrl": "/logos/python.svg",
+                                "altText": "Python",
+                                "url": "https://python.org"
+                            },
+                            {
+                                "imageUrl": "/logos/docker.svg",
+                                "altText": "Docker",
+                                "url": "https://docker.com"
+                            },
+                            {
+                                "imageUrl": "/logos/linux.svg",
+                                "altText": "Linux",
+                                "url": "https://www.linuxfoundation.org/"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "title": "🖥️ Personal projects",
+            "components": [
+                {
+                    "type": "heading",
+                    "contents": {
+                        "logo": "/logos/simple_trivia.svg",
+                        "name": "Simple Trivia Game",
+                        "subheading": {
+                            "type": "plain",
+                            "value": "https://simpletrivia.io"
+                        },
+                        "dates": [
+                            "February 2023",
+                            "Now"
+                        ]
+                    }
+                },
+                {
+                    "type": "body",
+                    "contents": {
+                        "accomplishments": [
+                            "Built a full-stack trivia game using Next.js, TypeScript, and Node.js and the Open Trivia DB REST API as its source of truth.",
+                            "Designed a responsive and engaging user experience with Figma and implemented the frontend with React.js, Tailwind CSS, and Framer Motion.",
+                            "Implemented data caching, data persistence, and facilitating real-time communication using PostgreSQL, Redis, and Socket.IO on the backend."
+                        ],
+                        "technologies": [
+                            {
+                                "imageUrl": "/logos/nodejs.svg",
+                                "altText": "Node.js",
+                                "url": "https://nodejs.org"
+                            },
+                            {
+                                "imageUrl": "/logos/javascript.svg",
+                                "altText": "JavaScript",
+                                "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+                            },
+                            {
+                                "imageUrl": "/logos/docker.svg",
+                                "altText": "Docker",
+                                "url": "https://docker.com"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

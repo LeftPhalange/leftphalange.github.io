@@ -1,0 +1,10 @@
+@keyframes landing {
+    0%   { opacity: 0%; }
+    100% { opacity: 100%; }
+}
+
+.welcome {
+    animation-name: landing;
+    animation-duration: 1.0s;
+    align-items: middle;
+}

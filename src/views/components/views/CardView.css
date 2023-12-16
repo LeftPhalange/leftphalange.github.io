@@ -1,0 +1,13 @@
+@keyframes card {
+    0%   { opacity: 0%; }
+    100% { opacity: 100%; }
+}
+
+.card {
+    animation-name: card;
+    position: relative;
+}
+
+.ul {
+    list-style-position: inside;
+}

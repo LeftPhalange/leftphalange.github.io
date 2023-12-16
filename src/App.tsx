@@ -1,25 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { useState, useEffect } from 'react';
+import Landing from './views/Landing';
+import Navigation from './views/Navigation';
+import CardView from './views/components/views/CardView';
+
+async function captureData() {
+  
+}
 
 function App() {
+  var [mappedData, setMappedData] = useState([]);
+  useEffect(() => {
+    fetch("/data.json").then((response) => {
+      return response.json();
+    }).then((json) => {
+      setMappedData(json["sections"].map((section: any, index: number) => <CardView key={index} title={section.title} components={section.components} />));
+    });
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navigation />
+      <div className="App py-16">
+        <div className="space-y-24 lg:px-64 px-8">
+          <Landing />
+          {mappedData}
+        </div>
+      </div>
+    </>
   );
 }
 

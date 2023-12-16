@@ -14,8 +14,8 @@ function Landing() {
           any user.
         </span>
         <div className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-          <Button url="/Resume_Portfolio.pdf" text="View resume" color="bg-blue-600" />
-          <Button url="https://linkedin.com/in/ethan-bovard" text="View LinkedIn profile" color="bg-blue-800" />
+          <Button url="/Resume_Portfolio.pdf" text="View resume" color="bg-blue-600" hoverColor="bg-blue-900" />
+          <Button url="https://linkedin.com/in/ethan-bovard" text="View LinkedIn profile" color="bg-blue-800" hoverColor="bg-blue-900" />
         </div>
       </div>
     );

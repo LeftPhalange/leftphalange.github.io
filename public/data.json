@@ -135,19 +135,14 @@
                         ],
                         "technologies": [
                             {
-                                "imageUrl": "/logos/nodejs.svg",
-                                "altText": "Node.js",
-                                "url": "https://nodejs.org"
+                                "imageUrl": "/logos/android.svg",
+                                "altText": "Android Studio",
+                                "url": "https://developer.android.com/studio"
                             },
                             {
-                                "imageUrl": "/logos/javascript.svg",
-                                "altText": "JavaScript",
-                                "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
-                            },
-                            {
-                                "imageUrl": "/logos/docker.svg",
-                                "altText": "Docker",
-                                "url": "https://docker.com"
+                                "imageUrl": "/logos/java.svg",
+                                "altText": "Java",
+                                "url": "https://www.java.com/en/"
                             }
                         ]
                     }

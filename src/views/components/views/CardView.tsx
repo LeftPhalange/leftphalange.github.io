@@ -12,10 +12,10 @@ function renderItems(sourceObj: any, key: string) {
     } else if (key == "technologies") {
         const technologies: any[] = sourceObj["technologies"];
         return (
-            <div key={key} className="flex flex-row align-middle">
+            <div key={key} className="flex flex-row items-center space-x-4">
                 {technologies.map((item: any, index: number) => (
                     <a key={index.toString()} href={item["url"]}>
-                        <img src={item["imageUrl"]} alt={item["altText"]} width="75%" height="75%" />
+                        <img src={item["imageUrl"]} alt={item["altText"]} width="36px" height="36px" />
                     </a>
                 ))}
             </div>

@@ -10,7 +10,8 @@
                         "name": "Itential",
                         "subheading": {
                             "type": "plain",
-                            "value": "Software Engineer"
+                            "url": null,
+                            "displayText": "Software Engineer"
                         },
                         "dates": [
                             "August 2021",
@@ -66,8 +67,9 @@
                         "logo": "/logos/simple_trivia.svg",
                         "name": "Simple Trivia Game",
                         "subheading": {
-                            "type": "plain",
-                            "value": "https://simpletrivia.io"
+                            "type": "link",
+                            "url": "https://simpletrivia.io",
+                            "displayText": "Home page"
                         },
                         "dates": [
                             "February 2023",
@@ -98,6 +100,49 @@
                                 "imageUrl": "/logos/docker.svg",
                                 "altText": "Docker",
                                 "url": "https://docker.com"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "title": "",
+            "components": [
+                {
+                    "type": "heading",
+                    "contents": {
+                        "logo": "/logos/tap_news.svg",
+                        "name": "Tap News",
+                        "subheading": {
+                            "type": "link",
+                            "url": "https://github.com/LeftPhalange/Tap_News",
+                            "displayText": "View on GitHub"
+                        },
+                        "dates": [
+                            "January 2021",
+                            "May 2021"
+                        ]
+                    }
+                },
+                {
+                    "type": "body",
+                    "contents": {
+                        "accomplishments": [
+                            "Collaborated with a team of four to develop an Android mobile application written in Java and Kotlin that provides news, weather, and traffic data",
+                            "Applied location awareness to capture weather information as precise as a landmark that enables the end user to make more informed decisions.",
+                            "Managed Google Cloud API access that enabled features such as traffic flow to calculate distance, center map based on physical GPS location, and use autocompletion for inputting an address"
+                        ],
+                        "technologies": [
+                            {
+                                "imageUrl": "/logos/android.svg",
+                                "altText": "Android Studio",
+                                "url": "https://developer.android.com/studio"
+                            },
+                            {
+                                "imageUrl": "/logos/java.svg",
+                                "altText": "Java",
+                                "url": "https://www.java.com/en/"
                             }
                         ]
                     }

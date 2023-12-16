@@ -25,12 +25,12 @@ function renderItems(sourceObj: any, key: string) {
     };
 }
 
-function returnLink(value: string) {
-    const isLink = value.startsWith("https://"); // TODO: match with regular expression pattern instead of startsWith
+function returnLink(subheading: any) {
+    const isLink = subheading["type"] == "link";
     return (
         isLink ?
-            (<a href={value}><span className="font-semibold">{value}</span></a>) :
-            (<span className="font-semibold">{value}</span>)
+            (<a href={subheading["url"]}><span className="font-semibold">{subheading["displayText"]}</span></a>) :
+            (<span className="font-semibold">{subheading["displayText"]}</span>)
     );
 }
 
@@ -43,7 +43,7 @@ function processComponent(type: string, contents: any) {
                     <div className="flex flex-col max-w-full">
                         <span className="text-xl font-semibold w-fit">{contents["name"]}</span>
                         <span className="text-base">
-                            {returnLink(contents.subheading.value)} • 🗓️ {contents.dates.join(" - ")}
+                            {returnLink(contents.subheading)} • 🗓️ {contents.dates.join(" - ")}
                         </span>
                     </div>
                 </div>
@@ -67,7 +67,7 @@ function processComponent(type: string, contents: any) {
 function CardView({ title, components }: { title: string, components: Component[] }) {
     return (
         <div className="flex flex-col space-y-2">
-            <span className="text-2xl font-bold">{title}</span>
+            { title != "" ? (<span className="text-2xl font-bold">{title}</span>) : (<></>) }
             <div className="card bg-gray-800 outline outline-1 outline-gray-700 rounded-xl">
                 <div className="p-8">
                     {

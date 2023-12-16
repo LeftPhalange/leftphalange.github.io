@@ -10,7 +10,8 @@
                         "name": "Itential",
                         "subheading": {
                             "type": "plain",
-                            "value": "Software Engineer"
+                            "url": null,
+                            "displayText": "Software Engineer"
                         },
                         "dates": [
                             "August 2021",
@@ -66,8 +67,9 @@
                         "logo": "/logos/simple_trivia.svg",
                         "name": "Simple Trivia Game",
                         "subheading": {
-                            "type": "plain",
-                            "value": "https://simpletrivia.io"
+                            "type": "link",
+                            "url": "https://simpletrivia.io",
+                            "displayText": "Home page"
                         },
                         "dates": [
                             "February 2023",
@@ -82,6 +84,54 @@
                             "Built a full-stack trivia game using Next.js, TypeScript, and Node.js and the Open Trivia DB REST API as its source of truth.",
                             "Designed a responsive and engaging user experience with Figma and implemented the frontend with React.js, Tailwind CSS, and Framer Motion.",
                             "Implemented data caching, data persistence, and facilitating real-time communication using PostgreSQL, Redis, and Socket.IO on the backend."
+                        ],
+                        "technologies": [
+                            {
+                                "imageUrl": "/logos/nodejs.svg",
+                                "altText": "Node.js",
+                                "url": "https://nodejs.org"
+                            },
+                            {
+                                "imageUrl": "/logos/javascript.svg",
+                                "altText": "JavaScript",
+                                "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+                            },
+                            {
+                                "imageUrl": "/logos/docker.svg",
+                                "altText": "Docker",
+                                "url": "https://docker.com"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "title": "",
+            "components": [
+                {
+                    "type": "heading",
+                    "contents": {
+                        "logo": "/logos/tap_news.svg",
+                        "name": "Tap News",
+                        "subheading": {
+                            "type": "link",
+                            "url": "https://github.com/LeftPhalange/Tap_News",
+                            "displayText": "View on GitHub"
+                        },
+                        "dates": [
+                            "January 2021",
+                            "May 2021"
+                        ]
+                    }
+                },
+                {
+                    "type": "body",
+                    "contents": {
+                        "accomplishments": [
+                            "Collaborated with a team of four to develop an Android mobile application written in Java and Kotlin that provides news, weather, and traffic data",
+                            "Applied location awareness to capture weather information as precise as a landmark that enables the end user to make more informed decisions.",
+                            "Managed Google Cloud API access that enabled features such as traffic flow to calculate distance, center map based on physical GPS location, and use autocompletion for inputting an address"
                         ],
                         "technologies": [
                             {

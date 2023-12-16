@@ -4,10 +4,6 @@ import Landing from './views/Landing';
 import Navigation from './views/Navigation';
 import CardView from './views/components/views/CardView';
 
-async function captureData() {
-  
-}
-
 function App() {
   var [mappedData, setMappedData] = useState([]);
   useEffect(() => {
@@ -21,7 +17,7 @@ function App() {
     <>
       <Navigation />
       <div className="App py-16">
-        <div className="space-y-24 lg:px-64 px-8">
+        <div className="space-y-16 lg:px-64 px-8">
           <Landing />
           {mappedData}
         </div>

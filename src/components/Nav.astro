@@ -1,10 +1,28 @@
 ---
 /**
- * Fixed, translucent site navigation.
+ * Floating, translucent site navigation.
+ *
+ * The bar is a rounded pill sized by its own contents, centred over the page
+ * rather than stretched across it. The <header> is the full-width fixed rail
+ * that positions the pill: it is transparent and `pointer-events-none` so the
+ * empty space either side of the pill never intercepts clicks on the page
+ * underneath, and the <nav> takes pointer events back for itself.
+ *
+ * The rail keeps `top-0` and carries the gap above the pill as padding, so the
+ * header box spans from the top of the viewport to the bottom of the pill —
+ * which is what lets the hide-on-scroll tween (`initNav` in
+ * scripts/animations.ts, translating `#site-nav` by -100%) clear the pill
+ * completely instead of parking it half on screen.
  *
  * No JS drawer: on small screens the anchor row simply shrinks and sits beside
  * the name. Animation hook: `data-animate="nav"` on the <header> — the GSAP
  * agent uses it for hide-on-scroll. The element is visible by default.
+ *
+ * Current-section highlight: scripts/navHighlight.ts puts
+ * `aria-current="location"` on whichever `data-nav-link` anchor owns the
+ * section in view, and the chip below is styled off that attribute. Both the
+ * padding and the rounding sit on every link at all times, so switching the
+ * highlight only ever changes colour — the row never reflows.
  *
  * The home link pairs the EB mark (public/logos/eb_home.svg) with the wordmark;
  * both stay in one anchor so the whole thing is a single target back to the top.
@@ -28,11 +46,16 @@ const sections = [
 <header
   id="site-nav"
   data-animate="nav"
-  class="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg/70 backdrop-blur-md"
+  class="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-3 pt-3 sm:pt-4"
 >
+  {/*
+    `max-w-full` with the rail's own padding keeps the pill inside the viewport
+    on the narrowest phones: the row shrinks to fit rather than pushing a
+    horizontal scrollbar onto the page.
+  */}
   <nav
     aria-label="Primary"
-    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8 sm:py-4"
+    class="pointer-events-auto flex max-w-full items-center gap-3 rounded-full border border-border bg-bg/70 py-2 pr-2.5 pl-4 shadow-lg shadow-black/30 backdrop-blur-md sm:gap-6 sm:py-2.5 sm:pr-3 sm:pl-5"
   >
     {/*
       The mark is decorative: `alt=""` keeps it out of the accessibility tree
@@ -46,7 +69,7 @@ const sections = [
     */}
     <a
       href="#main"
-      class="group inline-flex items-center gap-2.5 text-sm font-semibold tracking-tight text-text sm:text-base"
+      class="group inline-flex shrink-0 items-center gap-2.5 text-sm font-semibold tracking-tight text-text whitespace-nowrap sm:text-base"
     >
       <img
         src="/logos/eb_home.svg"
@@ -56,18 +79,26 @@ const sections = [
         decoding="async"
         class="h-7 w-7 shrink-0 sm:h-8 sm:w-8"
       />
-      <span class="transition-colors group-hover:text-accent">
+      {/*
+        The pill is only as wide as this row, so on the narrowest phones the
+        wordmark is what pushes it past the viewport. Under 440px it drops and
+        the mark carries the link on its own — the anchor keeps its accessible
+        name from the `sr-only` copy, so the target is unchanged for anyone not
+        looking at it.
+      */}
+      <span class="transition-colors group-hover:text-accent max-[439px]:sr-only">
         {site.name}
       </span>
     </a>
 
-    <ul class="flex items-center gap-4 text-sm sm:gap-8">
+    <ul class="flex shrink-0 items-center gap-1 text-sm whitespace-nowrap sm:gap-2">
       {
         sections.map((section) => (
           <li>
             <a
               href={section.href}
-              class="text-muted transition-colors hover:text-accent"
+              data-nav-link
+              class="block rounded-full px-2.5 py-1 text-muted transition-colors hover:text-text aria-[current=location]:bg-accent/10 aria-[current=location]:text-accent sm:px-3 sm:py-1.5"
             >
               {section.label}
             </a>

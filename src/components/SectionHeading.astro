@@ -5,80 +5,27 @@
  * The heading level is fixed at <h2> so the page keeps a valid outline under
  * the single hero <h1>.
  *
- * With `sticky`, the same <h2> is rendered inside a full-bleed bar that pins
- * below the nav and stays there for the length of the section — the section
- * title itself is the sticky header, not a second label repeating it.
+ * Nothing here pins. Section titles used to render inside a sticky bar under
+ * the nav; the floating pill now carries the "where am I" job on its own (the
+ * link for the section in view is marked `aria-current` — see
+ * scripts/navHighlight.ts), so the heading is free to scroll away with its
+ * content.
  *
- * Two structural notes for the sticky variant:
- *
- *  1. It emits its bar as a top-level element, so the component has to be a
- *     DIRECT child of the <section>. `position: sticky` is bounded by its
- *     parent: nested inside the section's inner wrapper it would come unstuck
- *     wherever that wrapper ended, which for Projects is immediately after the
- *     heading, long before the panels.
- *  2. The lede moves out of the bar and scrolls away normally. Pinning the
- *     title plus two lines of lede below a fixed nav would hold roughly a
- *     quarter of the viewport for the whole section.
- *
- * Both pieces still carry `data-animate="section-heading"`. initSectionHeadings
- * in scripts/animations.ts reads each hook as "the <h2> inside it, if any, plus
- * whatever else it holds", so the bar gets the word stagger and the detached
- * lede gets the supporting reveal, with no change to that file.
+ * Carries `data-animate="section-heading"`. initSectionHeadings in
+ * scripts/animations.ts reads the hook as "the <h2> inside it, if any, plus
+ * whatever else it holds", so the title gets the word stagger and the lede the
+ * supporting reveal.
  */
 interface Props {
   title: string;
   /** Optional one-line lede under the title. */
   lede?: string;
-  /**
-   * Pin the title below the nav for the length of the section. Only for
-   * sections long enough to be worth it — see index.astro.
-   */
-  sticky?: boolean;
 }
 
-const { title, lede, sticky = false } = Astro.props;
+const { title, lede } = Astro.props;
 ---
 
-{
-  sticky ? (
-    <Fragment>
-      {/*
-        `--nav-offset` (styles/global.css), not a fixed length: it resolves to
-        the nav's height while the bar is on screen, and to zero while the nav
-        is retracted on scroll down, so the heading follows it up instead of
-        hanging below an empty strip. The transition is what makes that a slide
-        rather than a jump; its duration matches the nav's own tween in
-        scripts/animations.ts.
-
-        Opaque `bg-bg`, not a translucent panel: content passes directly beneath
-        this and the title has to stay readable over all of it.
-      */}
-      <div
-        class="sticky top-[var(--nav-offset)] z-30 border-b border-border bg-bg transition-[top] duration-[350ms] ease-out"
-      >
-        <div
-          data-animate="section-heading"
-          class="mx-auto max-w-6xl px-5 py-4 sm:px-8 sm:py-5"
-        >
-          <h2 class="display-md text-text">{title}</h2>
-        </div>
-      </div>
-
-      {lede && (
-        <div class="mx-auto max-w-6xl px-5 sm:px-8">
-          <div
-            data-animate="section-heading"
-            class="mt-10 max-w-3xl sm:mt-12"
-          >
-            <p class="text-base text-muted sm:text-lg">{lede}</p>
-          </div>
-        </div>
-      )}
-    </Fragment>
-  ) : (
-    <div data-animate="section-heading" class="max-w-3xl">
-      <h2 class="display-md text-text">{title}</h2>
-      {lede && <p class="mt-4 text-base text-muted sm:text-lg">{lede}</p>}
-    </div>
-  )
-}
+<div data-animate="section-heading" class="max-w-3xl">
+  <h2 class="display-md text-text">{title}</h2>
+  {lede && <p class="mt-4 text-base text-muted sm:text-lg">{lede}</p>}
+</div>

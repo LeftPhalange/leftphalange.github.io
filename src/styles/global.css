@@ -1,0 +1,397 @@
+/* All @import rules must come first per the CSS spec. */
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+/*
+  Design tokens.
+
+  Tailwind v4 is configured in CSS, not a tailwind.config.js. Names live in the
+  `--color-*` namespace so Tailwind generates the matching utilities:
+    --color-bg      -> bg-bg, text-bg, border-bg
+    --color-border  -> border-border
+    --color-accent  -> text-accent, bg-accent, ...
+  Tailwind also emits each of these as a real custom property on :root, so
+  var(--color-bg) works in plain CSS too.
+*/
+@theme {
+  --color-bg: #0a0a0b; /* page background */
+  --color-surface: #141416; /* cards / raised panels */
+  --color-border: #232327; /* hairlines */
+  --color-text: #ededef; /* body text */
+  --color-muted: #8a8a93; /* secondary, dates, labels */
+  --color-accent: #4fd1ff; /* links, timeline, hover, focus ring */
+  --color-accent-dim: #1e4e5e; /* accent at low emphasis */
+  --color-accent-deep: #0a84ff; /* saturated end of the accent gradient */
+  --color-accent-soft: #2aa9ff; /* midpoint stop, softens the accent ramp */
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+@layer base {
+  /*
+    Height of the fixed nav, mirroring components/Nav.astro: the mark, plus that
+    row's vertical padding, plus the bottom hairline. The sticky section labels
+    offset themselves by it so they come to rest just clear of the bar rather
+    than sliding under it.
+
+    A constant because the nav's height is a design decision, not a measured
+    one — but it does have to be kept in step if Nav.astro's padding or mark
+    size changes.
+  */
+  :root {
+    --nav-h: 3.3125rem; /* 28px mark + 2 x 0.75rem padding + 1px border */
+  }
+
+  @media (width >= 40rem) {
+    :root {
+      --nav-h: 4.0625rem; /* 32px mark + 2 x 1rem padding + 1px border */
+    }
+  }
+
+  /*
+    Where a sticky section heading comes to rest (see SectionHeading.astro).
+
+    Normally the nav's height, so the heading parks directly under the bar. But
+    the nav retracts on scroll down (`initNav` in scripts/animations.ts), and a
+    heading left parked at --nav-h would then hang below an empty strip with
+    content scrolling through it. initNav marks <html> as it goes, and the
+    offset drops to zero so the heading rides up with the bar and takes its
+    place at the top of the viewport.
+
+    With JavaScript off the class is never added and the nav never moves, so
+    this stays at --nav-h — the correct resting state either way.
+  */
+  :root {
+    --nav-offset: var(--nav-h);
+  }
+
+  :root.nav-hidden {
+    --nav-offset: 0px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Accessibility: a clearly visible keyboard focus ring. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Only suppress the default ring for pointer/mouse focus, never keyboard. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background: var(--color-accent-dim);
+    color: var(--color-text);
+  }
+}
+
+/*
+  Display type helpers for oversized headings.
+  Fluid via clamp(), with tight tracking so large sizes stay optically correct.
+*/
+@layer components {
+  .display-xl,
+  .display-lg,
+  .display-md {
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.03;
+    text-wrap: balance;
+  }
+
+  .display-xl {
+    font-size: clamp(2.75rem, 9vw, 7rem);
+  }
+
+  .display-lg {
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+  }
+
+  .display-md {
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    line-height: 1.1;
+  }
+
+  /*
+    The hero reel's fade (see components/HeroReel.astro).
+
+    A mask, not an overlay gradient: masking to transparent reveals the real
+    page background underneath, so the fade lands on exactly --color-bg by
+    construction instead of via a gradient stop that has to be kept in sync
+    with the token. Only the alpha stops matter — the black is arbitrary.
+
+    Decorative. It sits over content the reel's own overflow already clips, so
+    it hides nothing that JavaScript would otherwise reveal.
+  */
+  /*
+    The hero's dot texture (see components/Hero.astro).
+
+    Two radial-gradients on the same square grid, the second offset by half a
+    cell, give a diagonal lattice out of one background-size — no bitmap, so it
+    stays crisp at any DPI and costs no request. The dot edge is soft (the
+    transparent stop sits 0.5px past the solid one) because a hard stop aliases
+    into visible squares at fractional device pixel ratios.
+
+    The mask is the part that matters: the field is densest at the top-left,
+    behind the name, and has fully dissolved before it reaches the reel or the
+    bottom of the section — so it never competes with text for contrast.
+
+    Purely decorative, and the element carrying it is aria-hidden and
+    pointer-events-none; it covers no content and intercepts no clicks.
+  */
+  .hero-dots {
+    --hero-dot-radius: 0.75px;
+    --hero-dot-gap: 15px;
+    --hero-dot-color: color-mix(in srgb, var(--color-accent) 24%, transparent);
+    --hero-dot: radial-gradient(
+      circle at center,
+      var(--hero-dot-color) var(--hero-dot-radius),
+      transparent calc(var(--hero-dot-radius) + 0.5px)
+    );
+
+    background-image: var(--hero-dot), var(--hero-dot);
+    background-size: var(--hero-dot-gap) var(--hero-dot-gap);
+    background-position:
+      0 0,
+      calc(var(--hero-dot-gap) / 2) calc(var(--hero-dot-gap) / 2);
+
+    /*
+      How far right the field is allowed to reach, as a fraction of the layer
+      (which is itself 130% of the section wide, per Hero.astro).
+
+      Wide viewports are the constrained case: the reel starts at the second
+      grid column, and its own left-edge fade dissolves the cards there. A
+      static lattice still sitting under that fade reads as two textures
+      fighting for the same space — worse while the cards are moving through
+      it. Reaching 55% of the layer, with the mask fully transparent by 72% of
+      that, puts the last visible dot near 45vw, short of the reel column.
+
+      Below `lg` there is no reel (it is `hidden lg:block`), so the field can
+      run most of the width without hitting anything.
+    */
+    --hero-dots-reach: 95%;
+
+    @media (width >= 64rem) {
+      --hero-dots-reach: 55%;
+    }
+
+    /* Only the alpha stops matter here — the black is arbitrary. */
+    --hero-dots-fade: radial-gradient(
+      var(--hero-dots-reach) 105% at 0% 0%,
+      rgb(0 0 0 / 1) 0%,
+      rgb(0 0 0 / 0.45) 38%,
+      rgb(0 0 0 / 0) 72%
+    );
+
+    -webkit-mask-image: var(--hero-dots-fade);
+    mask-image: var(--hero-dots-fade);
+  }
+
+  /*
+    The hero's corner glow (see components/Hero.astro).
+
+    A gradient, not a blurred solid: `filter: blur()` over a box this large is
+    a raster cost the compositor pays again whenever the layer is touched,
+    while a long alpha ramp is free after the first paint — and the reel is
+    animating right beside it.
+
+    It sits under the dot field in paint order (it comes first in the markup,
+    and neither carries a z-index), so the lattice reads on top of the glow
+    rather than being washed out by it.
+  */
+  .hero-orb {
+    --hero-orb-size: clamp(22rem, 55vw, 46rem);
+
+    width: var(--hero-orb-size);
+    height: var(--hero-orb-size);
+    /* Anchored off-canvas so only the falloff crosses into the section. */
+    top: calc(var(--hero-orb-size) * -0.45);
+    left: calc(var(--hero-orb-size) * -0.28);
+
+    background: radial-gradient(
+      closest-side circle at center,
+      color-mix(in srgb, var(--color-accent-deep) 26%, transparent) 0%,
+      color-mix(in srgb, var(--color-accent-deep) 11%, transparent) 45%,
+      transparent 100%
+    );
+  }
+
+  .hero-reel-mask {
+    /*
+      Absolute lengths, not percentages: how far a card takes to dissolve is a
+      visual constant, so it should not get shorter at 1024px than at 1920px
+      just because the column is narrower.
+    */
+    --hero-reel-fade: linear-gradient(
+      to right,
+      rgb(0 0 0 / 0) 0,
+      rgb(0 0 0 / 0) 24px,
+      rgb(0 0 0 / 1) 300px,
+      rgb(0 0 0 / 1) 100%
+    );
+
+    -webkit-mask-image: var(--hero-reel-fade);
+    mask-image: var(--hero-reel-fade);
+  }
+
+  /*
+    The 👋 easter egg (see scripts/handGame.ts).
+
+    Every element below is created by JavaScript when a game starts and removed
+    when it ends — none of it is in the served markup, so with JavaScript off
+    the page has no idea the game exists. The styles live here, beside the
+    site's other JS-driven decoration, so the script stays pure behaviour and
+    the look stays with the design tokens.
+  */
+
+  /*
+    The playfield: the whole viewport, above everything, and transparent to the
+    pointer. `pointer-events: none` is the important line — the overlay covers
+    the entire page, so without it every link and button underneath would stop
+    working for the length of a game. Only the hand inside takes clicks.
+  */
+  .hand-game-field {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /*
+    The flying hand. Positioned at the origin and moved entirely by transform,
+    which is what keeps the loop on the compositor rather than in layout.
+
+    `will-change` is set because this element is transformed on every single
+    frame for the length of a run — one of the few places that hint is earned.
+  */
+  .hand-game-hand {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    /* Kills the double-tap-to-zoom delay, so fast tapping works on touch. */
+    touch-action: manipulation;
+    pointer-events: auto;
+    will-change: transform;
+  }
+
+  /*
+    A generous invisible hit area around the glyph. The hand is small — 28px at
+    the mobile heading size — and chasing a falling 28px target with a fingertip
+    is not a game, it is an eye test.
+  */
+  .hand-game-hand::after {
+    content: '';
+    position: absolute;
+    inset: -0.45em;
+    border-radius: 50%;
+  }
+
+  /*
+    The scoreboard. Bottom right: the nav owns the top of the screen and the
+    hero copy owns the left, so this is the one corner that is always clear.
+
+    Borrows the StatusPill vocabulary — hairline border over the surface fill —
+    so an element that only ever appears mid-game still looks like part of the
+    site rather than a debug overlay.
+  */
+  .hand-game-hud {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 61;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.125rem;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.875rem;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    backdrop-filter: blur(8px);
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+    -webkit-user-select: none;
+
+    @media (width >= 40rem) {
+      right: 1.5rem;
+      bottom: 1.5rem;
+    }
+  }
+
+  .hand-game-hud-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .hand-game-hud-label {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /*
+    Its own transform origin: the score pops on every hit (a GSAP scale tween in
+    handGame.ts), and scaling from the centre would shove the label sideways.
+  */
+  .hand-game-hud-score {
+    display: inline-block;
+    transform-origin: right center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-accent);
+  }
+
+  .hand-game-hud-best {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  /* An empty "Best" line (nobody has scored yet) must not leave a gap. */
+  .hand-game-hud-best:empty {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

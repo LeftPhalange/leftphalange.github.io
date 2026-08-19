@@ -1,0 +1,65 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+
+// Astro.site comes from `site` in astro.config.mjs (https://ethanbovard.com).
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// TODO: /og.png does not exist yet. A later agent needs to add a 1200x630
+// image at public/og.png, otherwise link previews will 404.
+const ogImage = new URL('/og.png', Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImage} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#0A0A0B" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <meta name="generator" content={Astro.generator} />
+  </head>
+
+  <body class="min-h-screen bg-bg text-text antialiased">
+    <Nav />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    {/*
+      All GSAP motion. Astro bundles this script, compiles the TypeScript, and
+      emits it as `type="module"` (therefore deferred), once per page — so it
+      runs after the document is parsed and never blocks rendering.
+
+      Nothing on the page depends on it: every start state is applied at
+      runtime, and the script no-ops entirely under prefers-reduced-motion.
+    */}
+    <script>
+      import '../scripts/animations.ts';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+---
+/**
+ * Four labeled rows of text pills. No logo images — skills are text only.
+ */
+import TechPills from './TechPills.astro';
+import { skillGroups } from '../data/skills.ts';
+---
+
+<div class="mt-12 space-y-8 sm:mt-14 sm:space-y-10">
+  {
+    skillGroups.map((group) => (
+      <div
+        data-animate="skill-group"
+        class="grid gap-3 border-t border-border pt-6 sm:grid-cols-[9rem_1fr] sm:gap-6"
+      >
+        <h3 class="text-xs font-medium tracking-[0.2em] text-muted uppercase sm:pt-1.5">
+          {group.label}
+        </h3>
+        <TechPills items={group.items} label={group.label} />
+      </div>
+    ))
+  }
+</div>

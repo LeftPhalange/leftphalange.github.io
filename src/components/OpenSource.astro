@@ -1,0 +1,32 @@
+---
+/**
+ * Compact open-source credential row. Deliberately one line of chrome so it
+ * reads as a contribution, not a third product panel.
+ */
+import { openSource } from '../data/projects.ts';
+---
+
+<a
+  href={openSource.url}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-animate="open-source"
+  class="group mt-10 flex flex-col gap-3 rounded-xl border border-border bg-surface px-5 py-5 transition-colors hover:border-accent sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:px-6"
+>
+  <span class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <span class="text-xs font-medium tracking-[0.2em] text-accent uppercase">
+      Merged PR
+    </span>
+    <span class="font-mono text-sm text-text sm:text-base">
+      {openSource.repo}
+    </span>
+  </span>
+
+  <span class="flex items-center gap-2 text-sm text-muted sm:text-right">
+    <span>{openSource.description}</span>
+    <span
+      aria-hidden="true"
+      class="shrink-0 transition-transform group-hover:translate-x-0.5">&#8599;</span
+    >
+  </span>
+</a>

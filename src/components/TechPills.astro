@@ -1,0 +1,28 @@
+---
+/**
+ * Reusable row of text pills. Tech is rendered as text, never logo images.
+ *
+ * `label` becomes the list's accessible name; pass it whenever the surrounding
+ * markup does not already make the list's purpose obvious.
+ */
+interface Props {
+  items: string[];
+  label?: string;
+  class?: string;
+}
+
+const { items, label, class: className = '' } = Astro.props;
+---
+
+<ul
+  aria-label={label}
+  class:list={['flex flex-wrap gap-2', className]}
+>
+  {
+    items.map((item) => (
+      <li class="rounded-full border border-border bg-surface px-3 py-1 text-xs text-muted sm:text-sm">
+        {item}
+      </li>
+    ))
+  }
+</ul>

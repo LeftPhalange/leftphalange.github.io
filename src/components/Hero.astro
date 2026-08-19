@@ -1,0 +1,161 @@
+---
+/**
+ * Full-viewport opening block: availability chip, oversized name, one intro
+ * paragraph, and the four primary links — with the screenshot reel alongside
+ * on wide screens, and the stack strip closing it off underneath.
+ *
+ * Uses `min-h-screen` (not a fixed height) so the content can grow past the
+ * viewport on short screens instead of being clipped.
+ *
+ * `overflow-hidden` is what lets the reel bleed past the max-w-6xl container
+ * to the right viewport edge without giving the page a horizontal scrollbar.
+ * It also trims the oversized dot layer back to the section.
+ *
+ * The corner glow and the dot field are painted behind everything; the content
+ * wrapper carries `relative z-10` so it (and the reel) stay above them in the
+ * same stacking context. Note neither decoration is given a negative z-index —
+ * that would drop it behind the body background and make it invisible.
+ */
+import ArrowDownIcon from '@lucide/astro/icons/arrow-down';
+import { heroVisual } from '../data/heroVisual.ts';
+import { site, primaryLinks } from '../data/site.ts';
+import Button from './Button.astro';
+import HeroReel from './HeroReel.astro';
+import HeroShowcase from './HeroShowcase.astro';
+import HeroStack from './HeroStack.astro';
+import LinkIcon from './icons/LinkIcon.astro';
+import StatusPill from './StatusPill.astro';
+---
+
+<section
+  aria-label="Introduction"
+  class="relative flex min-h-screen flex-col justify-center overflow-hidden px-5 pt-28 pb-20 sm:px-8 sm:pt-32 sm:pb-28"
+>
+  {/* Blue corner glow, behind the dots — first in the markup, and neither
+      layer carries a z-index, so paint order follows the source. Its size and
+      offsets live with the gradient in `.hero-orb`. */}
+  <div aria-hidden="true" class="hero-orb pointer-events-none absolute"></div>
+
+  {/* Dot texture. Inset past the section edges so the masked falloff has room
+      to finish inside the box rather than being cut off by overflow-hidden. */}
+  <div
+    aria-hidden="true"
+    class="hero-dots pointer-events-none absolute -top-24 -left-24 h-[130%] w-[130%]"
+  >
+  </div>
+
+  <div
+    class="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-14 lg:grid-cols-2 lg:gap-16"
+  >
+    <div>
+      {/* Availability pill, with the location alongside. The pill only goes loud
+          while actually open to work; otherwise it drops to the quiet tone. */}
+      <div
+        data-animate="hero-chip"
+        class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm"
+      >
+        <StatusPill
+          label={site.availability}
+          tone={site.available ? 'accent' : 'neutral'}
+        />
+        <span class="text-muted">{site.location}</span>
+      </div>
+
+      {/* The hand is its own element so it can wave independently of the
+          character-by-character reveal. `inline-block` is what makes it
+          transformable at all — an inline box ignores rotation.
+
+          It is also the easter egg's trigger: clicking it starts the game in
+          scripts/handGame.ts, which is why it carries a pointer cursor. The
+          `select-none` matters for play, not looks — without it, clicking fast
+          drags a text selection across the heading. `touch-manipulation` drops
+          the mobile double-tap-to-zoom delay so quick tapping registers. */}
+      <h1 data-animate="hero-title" class="display-md mt-8 text-text">
+        Hi, I'm Ethan <span
+          data-animate="hero-wave"
+          class="inline-block cursor-pointer touch-manipulation select-none"
+        >👋</span>
+      </h1>
+
+      <p
+        data-animate="hero-subtitle"
+        class="mt-5 max-w-3xl text-lg text-muted sm:text-xl"
+      >
+        Full Stack Software Engineer
+      </p>
+
+      <p
+        data-animate="hero-intro"
+        class="mt-6 max-w-2xl leading-relaxed text-muted text-md"
+      >
+        From network automation to healthcare, I've built and shipped solutions
+        at scale across multiple stacks and technologies. Even in an AI-assisted
+        era, my commitment to good design, architecture, and implementation is just
+        as important as the issues I solve, no matter the domain.<br /><br />
+        Outside of my professional endeavors, I am always tackling something new
+        and exciting to work on through code. Click the button below to learn more
+        about me!
+      </p>
+
+      {/*
+        A real link, not a scripted scroll: `#work` is an anchor on the page, so
+        this works with JavaScript off, can be opened in a new tab, and inherits
+        the smooth scrolling and the section's own `scroll-mt-28` clearance for
+        the fixed nav — all from CSS.
+
+        The arrow nudges downward on hover, toward what the link moves to.
+      */}
+      <div data-animate="hero-cta" class="mt-8">
+        <Button
+          href="#work"
+          size="lg"
+          icon={ArrowDownIcon}
+          iconClass="motion-safe:group-hover:translate-y-0.5"
+        >
+          See my work
+        </Button>
+      </div>
+
+      {/*
+        Each pill carries its mark ahead of the label. The icons are stroked
+        outlines in `currentColor`, so they are monochrome at rest and turn
+        accent along with the label — one `group` on the anchor drives both,
+        including on keyboard focus, where hover styles never fire.
+
+        The icon is decorative here: the label right beside it is already the
+        link's accessible name, so the marks stay aria-hidden (set inside the
+        icon components) and add nothing for a screen reader to re-read.
+      */}
+      <ul data-animate="hero-links" class="mt-10 flex flex-wrap gap-3 sm:gap-4">
+        {
+          primaryLinks.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noopener noreferrer' : undefined}
+                class="group inline-flex items-center gap-2 rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-medium text-text transition-colors hover:border-accent hover:text-accent sm:gap-2.5 sm:px-6 sm:py-3 sm:text-base"
+              >
+                <LinkIcon
+                  name={link.icon}
+                  class="h-4 w-4 shrink-0 text-muted transition-colors group-hover:text-accent group-focus-visible:text-accent sm:h-[18px] sm:w-[18px]"
+                />
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    {/* Which screenshot treatment runs is a one-line switch in
+        data/heroVisual.ts. Both components render the same source list and
+        occupy the same grid column; only one is ever emitted. */}
+    {heroVisual === 'marquee' ? <HeroReel /> : <HeroShowcase />}
+  </div>
+
+  {/* Sibling of the grid, not a cell in it: the strip runs the full container
+      width beneath both columns. It carries its own `relative z-10`, since the
+      wrapper above provides that only for its own children. */}
+  <HeroStack />
+</section>

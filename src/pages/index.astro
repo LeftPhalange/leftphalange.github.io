@@ -1,0 +1,147 @@
+---
+/*
+  ANIMATION HOOK INVENTORY
+  ------------------------
+  Every hook is a `data-animate="..."` attribute on real markup. The GSAP agent
+  (src/scripts/animations.ts) should target these and nothing else — class names
+  are for styling only and may change.
+
+  HARD RULE: nothing on this page is hidden by default. There is no opacity: 0,
+  no visibility: hidden, and no transform offset in any base style. All content
+  is readable with JavaScript disabled. Animate *from* an offset with
+  gsap.from() / gsap.fromTo(), and no-op the whole thing under
+  prefers-reduced-motion: reduce.
+
+  hook                  count  element / component            intended use
+  --------------------  -----  -----------------------------  ---------------------------
+  nav                   1      <header id="site-nav">         hide-on-scroll-down
+  hero-chip             1      availability chip row          hero intro sequence
+  hero-title            1      <h1> (site name)               hero intro sequence
+  hero-wave             1      the hand inside the <h1>       split-exempt, loops a wave;
+                                                              also the easter egg's trigger
+                                                              (scripts/handGame.ts)
+  hero-subtitle         1      role line under the <h1>       hero intro sequence
+  hero-intro            1      hero paragraph                 hero intro sequence
+  hero-cta              1      "See my work" button wrapper   hero intro sequence
+  hero-links            1      <ul> of the four links         hero intro (stagger children)
+  hero-reel             0-1    HeroReel wrapper (lg and up)   hero intro; pause when offscreen
+  hero-reel-row         0-2    a screenshot track in the reel endless right-to-left marquee
+  hero-showcase         0-1    HeroShowcase stage (lg and up) hero intro; pause when offscreen
+  hero-showcase-card    0-8    a screenshot card on the stage arrive, grow, dissolve
+
+  The reel and the showcase are alternative treatments of the same screenshots;
+  data/heroVisual.ts picks one, so exactly one set of those hooks is on the page
+  at `lg` and up, and neither below it.
+  section-heading       7      SectionHeading title or lede   scroll-triggered reveal
+  timeline-rail         1      hairline rail in WorkTimeline  scaleY draw on scroll
+  work-entry            2      each <li> role in the timeline scroll-triggered reveal
+  work-node             2      dot on the rail per entry      pop-in with its entry
+  project-panel         2      each <article> project panel   scroll-triggered reveal
+  open-source           1      the vscode credential row      scroll-triggered reveal
+  skill-group           4      each labeled pill row          staggered reveal
+  education             1      the education block            scroll-triggered reveal
+  footer                1      <footer>                       scroll-triggered reveal
+
+  Section anchor ids (must stay in sync with Nav): #work, #projects, #skills.
+
+  Those three headings are rendered with `sticky`, which pins the <h2> below the
+  nav for the length of the section and detaches the lede into its own block.
+  That splits one heading into two `section-heading` hooks, which is why the
+  count above is 7 rather than 5 — see SectionHeading.astro.
+*/
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import WorkTimeline from '../components/WorkTimeline.astro';
+import ProjectPanel from '../components/ProjectPanel.astro';
+import OpenSource from '../components/OpenSource.astro';
+import Skills from '../components/Skills.astro';
+import Education from '../components/Education.astro';
+import { projects } from '../data/projects.ts';
+
+const title = 'Ethan Bovard — Full Stack Software Engineer';
+const description =
+  'Full Stack Software Engineer in Atlanta. Previously at Aegis Health and Itential. Building Simple Trivia and Helical.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Hero />
+
+  <section
+    id="work"
+    aria-label="Work experience"
+    class="scroll-mt-28 border-t border-border py-24 sm:py-32"
+  >
+    <SectionHeading
+      title="Work"
+      lede="Six years shipping production software, from clinical platforms to network automation for Fortune 500 infrastructure."
+      sticky
+    />
+
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <WorkTimeline />
+    </div>
+  </section>
+
+  {/*
+    The section, not the inner wrapper, carries the top border and padding: the
+    sticky heading has to be a direct child of the section to stay stuck for the
+    whole run of panels, and it cannot sit above the rule that opens the
+    section. Side effect worth knowing about — that hairline is now full-bleed,
+    matching every other section instead of stopping at the container.
+  */}
+  <section
+    id="projects"
+    aria-label="Projects"
+    class="scroll-mt-28 border-t border-border pt-24 sm:pt-32"
+  >
+    <SectionHeading
+      title="Projects"
+      lede="Things I designed, built, and run end to end."
+      sticky
+    />
+
+    {/* The panels are full-bleed, so the gap below the lede lives on a wrapper
+        here rather than as section padding — section padding would land after
+        the last panel instead of before the first. */}
+    <div class="mt-16 sm:mt-20">
+      {
+        projects.map((project, index) => (
+          <ProjectPanel project={project} index={index} />
+        ))
+      }
+    </div>
+  </section>
+
+  <section
+    aria-label="Open source"
+    class="border-t border-border px-5 py-24 sm:px-8 sm:py-32"
+  >
+    <div class="mx-auto max-w-6xl">
+      <SectionHeading title="Open source" />
+      <OpenSource />
+    </div>
+  </section>
+
+  <section
+    id="skills"
+    aria-label="Skills"
+    class="scroll-mt-28 border-t border-border py-24 sm:py-32"
+  >
+    <SectionHeading title="Skills" sticky />
+
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <Skills />
+    </div>
+  </section>
+
+  <section
+    aria-label="Education"
+    class="border-t border-border px-5 py-24 sm:px-8 sm:py-32"
+  >
+    <div class="mx-auto max-w-6xl">
+      <SectionHeading title="Education" />
+      <Education />
+    </div>
+  </section>
+</BaseLayout>

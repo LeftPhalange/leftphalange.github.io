@@ -1,0 +1,107 @@
+---
+/**
+ * One role on the work timeline.
+ *
+ * Renders the company mark when `entry.logo` is set and a bordered text
+ * monogram when it is not — Aegis Health Services has no SVG, and borrowing
+ * another company's mark would be wrong.
+ *
+ * Entries size to their own content; the five Aegis bullets are expected to be
+ * taller than the Itential entry.
+ */
+import TechPills from './TechPills.astro';
+import type { WorkEntry } from '../data/work.ts';
+
+interface Props {
+  entry: WorkEntry;
+}
+
+const { entry } = Astro.props;
+
+// The stored range uses an en dash; split it so each end can carry its own
+// machine-readable <time datetime>.
+const [startLabel, endLabel] = entry.dates.split('–').map((part) => part.trim());
+---
+
+<li
+  id={entry.id}
+  data-animate="work-entry"
+  class="relative list-none scroll-mt-28 pl-8 sm:pl-14"
+>
+  {/* Timeline node, sitting on the rail drawn by WorkTimeline. */}
+  <span
+    aria-hidden="true"
+    data-animate="work-node"
+    class="absolute top-2 left-0 h-3.5 w-3.5 rounded-full border-2 border-accent bg-bg"
+  ></span>
+
+  <div class="flex items-start gap-4 sm:gap-5">
+    <div
+      class="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl border border-border bg-surface p-2 sm:h-14 sm:w-14"
+    >
+      {
+        entry.logo ? (
+          <img
+            src={entry.logo}
+            alt={`${entry.company} logo`}
+            width="40"
+            height="40"
+            loading="lazy"
+            decoding="async"
+            class="max-h-full max-w-full object-contain"
+          />
+        ) : (
+          <span
+            aria-hidden="true"
+            class="text-sm font-semibold tracking-tight text-muted sm:text-base"
+          >
+            {entry.monogram}
+          </span>
+        )
+      }
+    </div>
+
+    <div class="min-w-0">
+      <h3 class="text-xl font-semibold tracking-tight text-text sm:text-2xl">
+        {entry.role}
+      </h3>
+      <p class="mt-1 text-base text-muted">
+        <a
+          href={entry.companyUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-text transition-colors hover:text-accent"
+        >
+          {entry.company}
+        </a>
+        <span aria-hidden="true" class="px-2">·</span>
+        <span>{entry.location}</span>
+      </p>
+      <p class="mt-1 text-sm text-muted">
+        <time datetime={entry.startDate}>{startLabel}</time>
+        <span aria-hidden="true"> – </span>
+        <time datetime={entry.endDate}>{endLabel}</time>
+      </p>
+    </div>
+  </div>
+
+  <ul class="mt-6 space-y-3 sm:mt-7 sm:space-y-4">
+    {
+      entry.bullets.map((bullet) => (
+        <li class="relative pl-5 text-base leading-relaxed text-muted">
+          <span
+            aria-hidden="true"
+            class="absolute top-[0.7em] left-0 h-1 w-1 rounded-full bg-accent-dim"
+          ></span>
+          {bullet}
+        </li>
+      ))
+    }
+  </ul>
+
+  <TechPills
+    items={entry.tech}
+    label={`Technologies used at ${entry.company}`}
+    class="mt-6"
+  />
+</li>

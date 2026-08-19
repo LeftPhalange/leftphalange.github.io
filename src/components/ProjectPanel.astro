@@ -1,0 +1,178 @@
+---
+/**
+ * One full-bleed project panel.
+ *
+ * Panels alternate: `index` drives both the background band (bg / surface) and
+ * which side the mark sits on at md and up. On mobile everything stacks in
+ * source order — mark, then copy.
+ *
+ * Below the copy sits the product's screenshot gallery, drawn from the same
+ * pool as the hero (data/screenshots.ts) and matched to the panel by project
+ * name.
+ */
+import { Image } from 'astro:assets';
+
+import TechPills from './TechPills.astro';
+import type { Project } from '../data/projects.ts';
+import { screenshotsFor } from '../data/screenshots.ts';
+
+interface Props {
+  project: Project;
+  index: number;
+}
+
+const { project, index } = Astro.props;
+
+const reversed = index % 2 === 1;
+const host = new URL(project.url).host.replace(/^www\./, '');
+const monogram = project.name.charAt(0);
+
+/**
+ * Matched to the panel by name. A project with no captures yet renders no
+ * gallery at all rather than an empty frame, so projects.ts stays free to list
+ * something before `npm run capture` has been pointed at it.
+ */
+const shots = screenshotsFor(project.name);
+---
+
+<article
+  id={project.id}
+  data-animate="project-panel"
+  class:list={[
+    'scroll-mt-28 border-t border-border',
+    reversed ? 'bg-surface' : 'bg-bg',
+  ]}
+>
+  <div class="mx-auto max-w-6xl px-5 py-20 sm:px-8 sm:py-28">
+    <div class="grid gap-10 md:grid-cols-12 md:items-start md:gap-14">
+      {/* Mark + status. */}
+      <div
+        class:list={[
+          'md:col-span-4',
+          reversed ? 'md:order-2' : 'md:order-1',
+        ]}
+      >
+        <div
+          class="grid h-20 w-20 place-items-center overflow-hidden rounded-2xl border border-border bg-bg p-3 sm:h-24 sm:w-24"
+        >
+          {
+            project.logo ? (
+              <img
+                src={project.logo}
+                alt={`${project.name} logo`}
+                width="72"
+                height="72"
+                loading="lazy"
+                decoding="async"
+                class="max-h-full max-w-full object-contain"
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                class="text-3xl font-bold tracking-tight text-muted"
+              >
+                {monogram}
+              </span>
+            )
+          }
+        </div>
+
+        {
+          project.status === 'in-development' && (
+            <p class="mt-5 inline-flex items-center gap-2 rounded-full border border-accent-dim px-3 py-1 text-xs text-accent">
+              <span
+                aria-hidden="true"
+                class="h-1.5 w-1.5 rounded-full bg-accent"
+              ></span>
+              In development
+            </p>
+          )
+        }
+      </div>
+
+      {/* Copy. */}
+      <div
+        class:list={[
+          'md:col-span-8',
+          reversed ? 'md:order-1' : 'md:order-2',
+        ]}
+      >
+        <h3 class="display-md text-text">{project.name}</h3>
+
+        <p class="mt-5 max-w-2xl text-lg leading-snug text-text sm:text-xl">
+          {project.tagline}
+        </p>
+
+        <p class="mt-5 max-w-2xl text-base leading-relaxed text-muted">
+          {project.body}
+        </p>
+
+        <TechPills
+          items={project.stack}
+          label={`${project.name} stack`}
+          class="mt-7"
+        />
+
+        <p class="mt-8">
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center gap-2 rounded-full border border-border bg-bg px-5 py-2.5 text-sm font-medium text-text transition-colors hover:border-accent hover:text-accent sm:px-6 sm:py-3 sm:text-base"
+          >
+            <span>Visit {host}</span>
+            <span
+              aria-hidden="true"
+              class="transition-transform group-hover:translate-x-0.5">&#8599;</span
+            >
+          </a>
+        </p>
+      </div>
+    </div>
+
+    {/*
+      The gallery runs the full container width under both columns rather than
+      inside the copy column: these are 1440x900 captures, and at eight columns
+      wide the UI in them stops being readable, which is the entire point of
+      showing them here.
+
+      Unlike the hero's cards these are content, not texture, so each one gets
+      real alt text and a visible caption naming the screen. Card fill is the
+      opposite band to the panel's own, which keeps the caption strip distinct
+      on both the bg and surface panels.
+
+      No <h2>/<h3> in here on purpose: initProjectPanels() in
+      scripts/animations.ts finds the project title by taking the panel's only
+      <h3>, and a second one would capture the parallax.
+    */}
+    {
+      shots.length > 0 && (
+        <ul class="mt-14 grid list-none gap-5 p-0 sm:mt-16 sm:grid-cols-2">
+          {shots.map((shot) => (
+            <li>
+              <figure
+                class:list={[
+                  'overflow-hidden rounded-xl border border-border',
+                  reversed ? 'bg-bg' : 'bg-surface',
+                ]}
+              >
+                <Image
+                  src={shot.src}
+                  alt={`${project.name} — the ${shot.label} screen`}
+                  widths={[560, 1120]}
+                  sizes="(min-width: 1024px) 552px, (min-width: 640px) 46vw, 90vw"
+                  loading="lazy"
+                  decoding="async"
+                  class="block h-auto w-full border-b border-border"
+                />
+                <figcaption class="px-4 py-3 text-sm text-muted">
+                  {shot.label}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</article>

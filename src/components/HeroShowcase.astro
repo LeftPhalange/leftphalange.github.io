@@ -1,0 +1,104 @@
+---
+/**
+ * The hero's right-hand side, montage treatment: loose product screens that
+ * arrive one at a time, drift toward the viewer as they grow, and dissolve —
+ * two or three of them in the air at once, at slightly different angles, like a
+ * cut of camera moves rather than a slideshow.
+ *
+ * Selected by `heroVisual` in data/heroVisual.ts; components/HeroReel.astro is
+ * the other treatment. GSAP drives the cycle (`initHeroShowcase` in
+ * scripts/animations.ts).
+ *
+ * Three things here exist specifically to serve the animation:
+ *
+ *  1. There is no frame. The stage is an empty positioned box with nothing
+ *     drawn on it and no clipping of its own — cards are free to grow past its
+ *     edges and off the right of the viewport, where the hero section's
+ *     `overflow-hidden` is the only thing that trims them. Its one job is to
+ *     reserve height in the grid, which absolutely positioned children cannot.
+ *  2. Cards are dealt into a small set of LANES — a fixed anchor, tilt and
+ *     drift direction. A card's index picks its lane, so consecutive screens
+ *     land in different parts of the stage and the same spot is never used
+ *     twice in a row. The lane count divides the screenshot count so a lane is
+ *     always empty again before its next card arrives.
+ *  3. The tilt sits on the lane wrapper, never on the card. GSAP owns the
+ *     card's transform entirely (scale, drift), so the two never have to share
+ *     one `transform` string.
+ *
+ * Per the motion contract in scripts/animations.ts, nothing here starts hidden.
+ * With JavaScript off every card paints at rest, which reads as a scattered
+ * collage of tilted screenshots — a fair still of what the montage is.
+ */
+import { Image } from 'astro:assets';
+
+import { heroReel } from '../data/screenshots.ts';
+
+/**
+ * Where a card sits, how it is tilted, and which way it drifts as it comes
+ * forward. Drift is in CSS pixels, applied by the animation.
+ *
+ * Anchors are absolute lengths across, percentages down. The stage gets wider
+ * with the viewport but the cards do not, so a percentage across would spread
+ * the cluster apart on a large screen and open a gap between it and the copy;
+ * pinning it to the stage's left edge keeps the same arrangement everywhere and
+ * lets the extra width go where it doesn't hurt — the right-hand spill.
+ *
+ * Every anchor keeps clear of the left edge and drifts right, away from the
+ * intro copy: a card at its largest overhangs its anchor by half the growth,
+ * and the grid gap has to absorb that without the card ever crossing the text.
+ */
+const lanes = [
+  { at: 'left-4 top-0', tilt: '-rotate-3', dx: 14, dy: -26 },
+  { at: 'left-[232px] top-[20%]', tilt: 'rotate-2', dx: 38, dy: 8 },
+  { at: 'left-12 top-[50%]', tilt: '-rotate-2', dx: 6, dy: 34 },
+  { at: 'left-[264px] top-[64%]', tilt: 'rotate-3', dx: 30, dy: 22 },
+];
+---
+
+{
+  /*
+    aria-hidden, and every alt is empty: this is decoration. Both products are
+    described in full in the Projects section below, so a screen-reader user
+    loses nothing by not being read a list of eight unlabelled frames.
+
+    The negative right margin is a fixed overhang rather than a bleed to the
+    viewport edge: the cards keep their own size at every width, so all a full
+    bleed buys is empty stage between the copy and the cluster. This much lets
+    the right-hand cards run past the container while the arrangement stays put.
+  */
+}
+<div
+  data-animate="hero-showcase"
+  aria-hidden="true"
+  class="relative hidden h-[560px] lg:-mr-16 lg:block xl:-mr-32 xl:h-[640px]"
+>
+  {
+    heroReel.map((shot, index) => {
+      const lane = lanes[index % lanes.length];
+
+      return (
+        <div class:list={['absolute', lane.at, lane.tilt]}>
+          <figure
+            data-animate="hero-showcase-card"
+            data-drift-x={lane.dx}
+            data-drift-y={lane.dy}
+            class="w-[360px] overflow-hidden rounded-xl border border-border bg-surface shadow-2xl shadow-black/30 xl:w-[420px]"
+          >
+            {/* Only the first card is part of the opening beat; the rest have
+                seconds before they are needed, so they queue behind the copy,
+                the fonts and that first screen. */}
+            <Image
+              src={shot.src}
+              alt=""
+              widths={[420, 840]}
+              sizes="420px"
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              class="block h-auto w-full"
+            />
+          </figure>
+        </div>
+      );
+    })
+  }
+</div>

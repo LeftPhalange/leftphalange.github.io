@@ -1,0 +1,30 @@
+---
+/**
+ * Single education record. Small by design — it sits last on the page.
+ */
+import { education } from '../data/skills.ts';
+
+const [startLabel, endLabel] = education.dates
+  .split('–')
+  .map((part) => part.trim());
+---
+
+<div
+  data-animate="education"
+  class="mt-10 flex flex-col gap-2 rounded-xl border border-border bg-surface px-5 py-6 sm:flex-row sm:items-baseline sm:justify-between sm:gap-8 sm:px-6"
+>
+  <div>
+    <h3 class="text-lg font-semibold tracking-tight text-text sm:text-xl">
+      {education.institution}
+    </h3>
+    <p class="mt-1 text-base text-muted">{education.degree}</p>
+  </div>
+
+  <p class="text-sm text-muted sm:text-right">
+    <time datetime={education.startDate}>{startLabel}</time>
+    <span aria-hidden="true"> – </span>
+    <time datetime={education.endDate}>{endLabel}</time>
+    <span aria-hidden="true" class="px-2">·</span>
+    <span>{education.location}</span>
+  </p>
+</div>

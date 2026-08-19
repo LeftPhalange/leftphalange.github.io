@@ -1,0 +1,25 @@
+---
+/**
+ * Vertical timeline of roles: a hairline rail with one node per entry.
+ *
+ * The rail is decorative and carries `data-animate="timeline-rail"` so the GSAP
+ * agent can draw it on scroll. It is fully painted by default — no JS required.
+ */
+import WorkEntry from './WorkEntry.astro';
+import { work } from '../data/work.ts';
+---
+
+{/*
+  `flex flex-col gap-*` rather than `space-y-*`: the rail below is absolutely
+  positioned, and space-y's margin-bottom would shorten it (both top and bottom
+  are set). Flex `gap` ignores out-of-flow children entirely.
+*/}
+<ol class="relative mt-14 flex flex-col gap-16 sm:mt-16 sm:gap-24">
+  <span
+    aria-hidden="true"
+    data-animate="timeline-rail"
+    class="absolute top-3 bottom-3 left-[6.5px] w-px bg-border"
+  ></span>
+
+  {work.map((entry) => <WorkEntry entry={entry} />)}
+</ol>

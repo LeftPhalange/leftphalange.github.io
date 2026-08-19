@@ -1,0 +1,48 @@
+---
+/**
+ * The strip of tool marks that closes the hero.
+ *
+ * Sits below the intro column and the reel, across the full container width, so
+ * it reads as the base of the hero rather than part of the copy.
+ *
+ * Every mark is monochrome at rest — one grey, no brand colours — and lifts to
+ * the accent on hover, one at a time. Grey at rest is what makes the row read
+ * as a single texture instead of thirteen competing logos, and it is the reason
+ * the marks are inline SVG filled with `currentColor` rather than <img>: an
+ * <img> cannot be recoloured by the page.
+ *
+ * The names are real text, not tooltips — `sr-only`, so a screen reader gets
+ * "TypeScript, JavaScript, Python…" from a list of thirteen items while the
+ * page shows only the marks. `title` adds the same name as a pointer tooltip,
+ * which costs nothing and is the only way a mouse user identifies an unfamiliar
+ * one.
+ *
+ * No `data-animate` hook: every hero animation in scripts/animations.ts targets
+ * a named hook, so this simply paints with the page and never depends on JS.
+ */
+import { stack } from '../data/stack.ts';
+import StackIcon from './icons/StackIcon.astro';
+---
+
+<section
+  aria-labelledby="hero-stack-heading"
+  class="relative z-10 mx-auto mt-16 w-full max-w-6xl sm:mt-20"
+>
+  <h2
+    id="hero-stack-heading"
+    class="text-xs font-medium tracking-[0.2em] text-muted uppercase"
+  >
+    Stack I work with
+  </h2>
+
+  <ul class="mt-6 flex flex-wrap items-center gap-x-7 gap-y-6 sm:gap-x-9">
+    {
+      stack.map((item) => (
+        <li title={item.name} class="text-muted transition-colors hover:text-accent">
+          <StackIcon name={item.icon} class="h-7 w-7 sm:h-8 sm:w-8" />
+          <span class="sr-only">{item.name}</span>
+        </li>
+      ))
+    }
+  </ul>
+</section>

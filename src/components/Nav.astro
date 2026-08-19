@@ -1,0 +1,79 @@
+---
+/**
+ * Fixed, translucent site navigation.
+ *
+ * No JS drawer: on small screens the anchor row simply shrinks and sits beside
+ * the name. Animation hook: `data-animate="nav"` on the <header> — the GSAP
+ * agent uses it for hide-on-scroll. The element is visible by default.
+ *
+ * The home link pairs the EB mark (public/logos/eb_home.svg) with the wordmark;
+ * both stay in one anchor so the whole thing is a single target back to the top.
+ */
+import { site } from '../data/site.ts';
+
+const sections = [
+  { label: 'Work', href: '#work' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Skills', href: '#skills' },
+];
+---
+
+<a
+  href="#main"
+  class="sr-only rounded-md bg-surface px-4 py-2 text-sm text-text focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50"
+>
+  Skip to content
+</a>
+
+<header
+  id="site-nav"
+  data-animate="nav"
+  class="fixed inset-x-0 top-0 z-40 border-b border-border bg-bg/70 backdrop-blur-md"
+>
+  <nav
+    aria-label="Primary"
+    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3 sm:px-8 sm:py-4"
+  >
+    {/*
+      The mark is decorative: `alt=""` keeps it out of the accessibility tree
+      because the name right beside it is already this link's accessible name,
+      and "Ethan Bovard logo, Ethan Bovard" is just the same thing read twice.
+
+      Explicit width/height so the row reserves the box before the SVG lands —
+      the nav is fixed and above the fold, so a late reflow here is visible.
+      Left alone on hover: it is a fixed-gradient brand mark, and only the
+      wordmark shifts to the accent.
+    */}
+    <a
+      href="#main"
+      class="group inline-flex items-center gap-2.5 text-sm font-semibold tracking-tight text-text sm:text-base"
+    >
+      <img
+        src="/logos/eb_home.svg"
+        alt=""
+        width="32"
+        height="32"
+        decoding="async"
+        class="h-7 w-7 shrink-0 sm:h-8 sm:w-8"
+      />
+      <span class="transition-colors group-hover:text-accent">
+        {site.name}
+      </span>
+    </a>
+
+    <ul class="flex items-center gap-4 text-sm sm:gap-8">
+      {
+        sections.map((section) => (
+          <li>
+            <a
+              href={section.href}
+              class="text-muted transition-colors hover:text-accent"
+            >
+              {section.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

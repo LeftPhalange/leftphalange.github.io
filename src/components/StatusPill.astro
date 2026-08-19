@@ -1,0 +1,102 @@
+---
+/**
+ * Pill-shaped status badge: an icon inside a circular badge, followed by a
+ * short label — the hero's "Open to work" chip.
+ *
+ * Standalone and content-agnostic: it knows nothing about the site data, so it
+ * can carry any short status ("Available Sept", "Speaking at ...").
+ *
+ * The icon is a Lucide component passed in as a prop rather than an icon *name*
+ * string, so only the icons actually used get bundled.
+ */
+
+import { CheckIcon, type AstroComponent } from '@lucide/astro';
+
+interface Props {
+  /** Visible text, and the pill's accessible name. A few words at most. */
+  label: string;
+  /** Lucide icon drawn in the badge. Defaults to a check mark. */
+  icon?: AstroComponent;
+  /**
+   * `accent` is the gradient-outlined treatment — it's a headline element, so
+   * use it once per page. `neutral` is the quiet surface chip for a status that
+   * shouldn't shout (e.g. when no longer looking for work).
+   */
+  tone?: 'accent' | 'neutral';
+  class?: string;
+}
+
+const {
+  label,
+  icon: Icon = CheckIcon,
+  tone = 'accent',
+  class: className = '',
+} = Astro.props;
+
+/**
+ * The outline is drawn as a two-element sandwich rather than a gradient border:
+ * the outer span carries the gradient and the outline's thickness as padding,
+ * the inner span paints the page colour back over everything but that
+ * rim. `border-image` can't
+ * follow a border-radius, and the padding-box/border-box background stack needs
+ * an unreadable arbitrary value — this is the legible version.
+ *
+ * Consequence: `body` must match whatever the pill sits on. Both tones assume
+ * the page background, which is where the hero uses it.
+ */
+const tones = {
+  accent: {
+    // Three stops, not two: the mid stop sits past the halfway mark so most of
+    // the colour shift happens across the wide right-hand side rather than
+    // snapping behind the badge. `bg-linear-to-r` interpolates in oklab, which
+    // keeps the blue-to-cyan path perceptually even.
+    ring: 'bg-linear-to-r from-accent-deep from-5% via-accent-soft via-55% to-accent',
+    body: 'bg-bg text-text',
+    // The disc keeps a gradient fill: with the pill itself now hollow, it is
+    // the one saturated element holding the eye.
+    badge: 'bg-linear-to-br from-accent-deep to-accent',
+    icon: 'text-white',
+  },
+  neutral: {
+    ring: 'bg-border',
+    body: 'bg-bg text-text',
+    badge: 'bg-border',
+    icon: 'text-muted',
+  },
+} as const;
+
+const style = tones[tone];
+---
+
+<span class:list={['inline-flex rounded-full p-0.5', style.ring, className]}>
+  <span
+    class:list={[
+      'inline-flex select-none items-center gap-2 rounded-full p-1 pr-3.5 text-xs font-normal sm:gap-2.5 sm:p-1.5 sm:pr-4 sm:text-sm',
+      style.body,
+    ]}
+  >
+    <span
+      aria-hidden="true"
+      class:list={[
+        'flex h-5 w-5 shrink-0 items-center justify-center rounded-full sm:h-6 sm:w-6',
+        style.badge,
+      ]}
+    >
+      {/*
+        The disc is a fixed size, so the icon's own size is what sets the ring of
+        padding around it — the classes below (10px, 12px at sm) leave ~5px on
+        every side. They override the `size` attribute, which stays as a sane
+        fallback if the stylesheet never lands.
+
+        Heavier stroke than the Lucide default: the mark is small and sits on a
+        saturated disc, where a 2px stroke reads as thin.
+      */}
+      <Icon
+        class:list={['h-4 w-4', style.icon]}
+        size={12}
+        stroke-width={3}
+      />
+    </span>
+    {label}
+  </span>
+</span>

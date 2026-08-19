@@ -1,0 +1,195 @@
+---
+/**
+ * The site's button. Reusable and content-agnostic — it knows nothing about
+ * the page it lands on.
+ *
+ * Polymorphic by prop, not by variant name: pass `href` and it renders an
+ * `<a>`, omit it and you get a `<button>`. That matters for the hero's
+ * scroll-to-section control, which is genuinely a link (it navigates to
+ * `#work`, works with JS off, and can be opened in a new tab) but should look
+ * like a button.
+ *
+ * The icon is a Lucide component passed in as a prop rather than a name
+ * string, matching StatusPill — only the icons actually used get bundled.
+ *
+ * Focus is deliberately unstyled here: the global `:focus-visible` rule in
+ * styles/global.css already draws the accent ring on every focusable element,
+ * and a local override would only risk drifting from it.
+ */
+import type { AstroComponent } from '@lucide/astro';
+
+interface Props {
+  /** Renders an `<a>` when set; otherwise a `<button>`. */
+  href?: string;
+  /** Adds target/rel handling. Ignored without `href`. */
+  external?: boolean;
+  /** Button type. Ignored when `href` is set. Defaults to `button` — never a stray submit. */
+  type?: 'button' | 'submit' | 'reset';
+  /**
+   * `primary` is the filled accent CTA — loud, so use it once per view.
+   * `secondary` is the outlined surface pill used for the hero's link row.
+   * `ghost` is text-only, for tertiary actions.
+   */
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  /** Lucide icon drawn alongside the label. */
+  icon?: AstroComponent;
+  iconPosition?: 'start' | 'end';
+  /**
+   * Extra classes on the icon. The root is a `group`, so a caller can add its
+   * own hover behaviour here — e.g. `group-hover:translate-y-0.5` to make a
+   * down-arrow nudge toward what it scrolls to.
+   */
+  iconClass?: string;
+  class?: string;
+}
+
+/**
+ * Colour only. Geometry lives in `sizes` so the two can vary independently.
+ *
+ * `primary` is hollow, not filled: an accent gradient rim around the page
+ * colour, with a white label. It reuses the same three-stop ramp as
+ * StatusPill, so the hero's chip and its CTA read as one family. See the
+ * scoped `.btn-outline` rule below for how the rim is drawn.
+ *
+ * `icon` is only set where the icon should sit quieter than the label. On the
+ * primary variant it inherits the white, since the mark is part of the label,
+ * not a decoration beside it.
+ */
+const variants = {
+  primary: {
+    root: 'btn-outline text-white hover:shadow-lg hover:shadow-accent/20 motion-safe:hover:-translate-y-0.5',
+    icon: '',
+  },
+  secondary: {
+    root: 'border border-border bg-surface text-text hover:border-accent hover:text-accent',
+    icon: 'text-muted group-hover:text-accent group-focus-visible:text-accent',
+  },
+  ghost: {
+    root: 'text-muted hover:text-accent',
+    icon: '',
+  },
+} as const;
+
+const sizes = {
+  sm: { root: 'gap-1.5 px-4 py-2 text-sm', icon: 'h-4 w-4', px: 16 },
+  md: {
+    root: 'gap-2 px-5 py-2.5 text-sm sm:gap-2.5 sm:px-6 sm:py-3 sm:text-base',
+    icon: 'h-4 w-4 sm:h-[18px] sm:w-[18px]',
+    px: 18,
+  },
+  lg: {
+    root: 'gap-2.5 px-6 py-3 text-base sm:px-7 sm:py-3.5 sm:text-lg',
+    icon: 'h-5 w-5',
+    px: 20,
+  },
+} as const;
+
+const {
+  href,
+  external = false,
+  type = 'button',
+  variant = 'primary',
+  size = 'md',
+  icon: Icon,
+  iconPosition = 'end',
+  iconClass = '',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const style = variants[variant];
+const dimensions = sizes[size];
+
+/* Only transition what actually changes, so the paint stays cheap. Reduced
+   motion is handled globally (durations are zeroed in styles/global.css). */
+const base =
+  'group relative isolate inline-flex shrink-0 items-center justify-center rounded-full font-medium transition-[color,background-color,border-color,box-shadow,transform] duration-200';
+
+const iconClasses = [
+  'shrink-0 transition-transform duration-200',
+  dimensions.icon,
+  style.icon,
+  iconClass,
+];
+---
+
+<Tag
+  href={href}
+  target={href && external ? '_blank' : undefined}
+  rel={href && external ? 'noopener noreferrer' : undefined}
+  type={href ? undefined : type}
+  class:list={[base, dimensions.root, style.root, className]}
+  {...rest}
+>
+  {
+    /* The label is the accessible name, so the mark is decorative — Lucide
+       icons already carry aria-hidden. */
+    Icon && iconPosition === 'start' && (
+      <Icon size={dimensions.px} class:list={iconClasses} />
+    )
+  }
+  <slot />
+  {
+    Icon && iconPosition === 'end' && (
+      <Icon size={dimensions.px} class:list={iconClasses} />
+    )
+  }
+</Tag>
+
+<style>
+  /*
+    The gradient rim on the primary variant.
+
+    Two background layers on one element, not the nested-span sandwich
+    StatusPill uses: the first paints the page colour across the *padding* box,
+    the second shows the gradient through only where the border sits. The
+    border itself is transparent, so it acts purely as the window. This follows
+    border-radius correctly, which `border-image` cannot.
+
+    Consequence, same as StatusPill's: the padding-box layer is the page
+    colour, so the button assumes it sits on `--color-bg`. On a raised surface
+    it would show a dark plate around itself.
+
+    1.5px rather than 1px: the CTA sits beside 1px-bordered link pills and has
+    to out-weigh them without becoming chunky.
+  */
+  .btn-outline {
+    --btn-rim: linear-gradient(
+      to right,
+      var(--color-accent-deep) 5%,
+      var(--color-accent-soft) 55%,
+      var(--color-accent)
+    );
+
+    border: 2px solid transparent;
+    background:
+      linear-gradient(var(--color-bg), var(--color-bg)) padding-box,
+      var(--btn-rim) border-box;
+  }
+
+  /*
+    Hover wash. A separate layer rather than a second `background` declaration
+    because gradients do not interpolate — swapping the padding-box fill would
+    snap, whereas an overlay can fade.
+
+    `z-index: -1` is contained by the `isolate` on the root, so the tint lands
+    above the button's own background and below its label.
+  */
+  .btn-outline::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+
+  .btn-outline:hover::before,
+  .btn-outline:focus-visible::before {
+    opacity: 1;
+  }
+</style>

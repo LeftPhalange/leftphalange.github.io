@@ -1,0 +1,94 @@
+---
+/**
+ * Renders one mark from the hero's stack strip.
+ *
+ * The marks come from `simple-icons`, which ships each brand as a single filled
+ * path on a 24-unit grid. It is a build-time dependency only — the geometry is
+ * inlined into the HTML here, and no part of the package reaches the browser. Nothing here sets a colour: the path is filled with
+ * `currentColor` and the brand's own hex (`icon.hex`, which simple-icons also
+ * exposes) is deliberately ignored, so the caller decides the colour and the
+ * whole row can be grey at rest and accent on hover.
+ *
+ * AWS is the one exception. simple-icons carries no Amazon or AWS mark — they
+ * are absent from the set on trademark grounds — so it is drawn as a plain
+ * cloud instead: a generic glyph standing in for the name, not an imitation of
+ * Amazon's. It is authored on the same 24-unit grid, and filled rather than
+ * stroked, so it sits in the row without looking like it came from elsewhere.
+ *
+ * Marks are `aria-hidden` and carry no <title>: the caller pairs each one with
+ * the visible-to-screen-readers name from data/stack.ts, which keeps the
+ * accessible name in the data rather than split across two files.
+ */
+import {
+  siDjango,
+  siDocker,
+  siGit,
+  siJavascript,
+  siNextdotjs,
+  siNodedotjs,
+  siPostgresql,
+  siPython,
+  siReact,
+  siTailwindcss,
+  siTypescript,
+} from 'simple-icons';
+
+import type { StackIconName } from '../../data/stack.ts';
+
+interface Props {
+  name: StackIconName;
+  class?: string;
+}
+
+/**
+ * A filled cloud on the same grid as the brand marks. See the note above.
+ *
+ * Three overlapping discs over a block that squares off the underside, rather
+ * than one clever path: every shape is a plain circle or rect with obvious
+ * numbers, which is far easier to nudge later than arc flags, and they union
+ * cleanly because all of them paint in the same colour. Bounds work out to
+ * x 3.5–21.5 and y 5.5–18.5, so the glyph sits centred on the 24-unit grid at
+ * roughly the visual weight of the brand marks beside it.
+ */
+const AWS_CLOUD = `
+  <circle cx="8" cy="14" r="4.5" />
+  <circle cx="12.5" cy="11" r="5.5" />
+  <circle cx="17" cy="14" r="4.5" />
+  <rect x="8" y="14" width="9" height="4.5" />
+`;
+
+const path = (d: string) => `<path d="${d}" />`;
+
+const marks: Record<StackIconName, string> = {
+  typescript: path(siTypescript.path),
+  javascript: path(siJavascript.path),
+  python: path(siPython.path),
+  react: path(siReact.path),
+  nextjs: path(siNextdotjs.path),
+  tailwind: path(siTailwindcss.path),
+  nodejs: path(siNodedotjs.path),
+  django: path(siDjango.path),
+  postgresql: path(siPostgresql.path),
+  docker: path(siDocker.path),
+  aws: AWS_CLOUD,
+  git: path(siGit.path),
+};
+
+const { name, class: className } = Astro.props;
+---
+
+{
+  /*
+    set:html because a mark can be more than one shape (see the cloud above).
+    Everything it renders is a constant in this file or geometry straight out of
+    the simple-icons package — no user input reaches it.
+  */
+}
+<svg
+  viewBox="0 0 24 24"
+  fill="currentColor"
+  aria-hidden="true"
+  focusable="false"
+  class={className}
+  set:html={marks[name]}
+/>

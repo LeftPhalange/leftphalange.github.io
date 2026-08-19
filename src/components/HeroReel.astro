@@ -1,0 +1,97 @@
+---
+/**
+ * The hero's right-hand side: two rows of product screenshots that stream
+ * right-to-left and dissolve into the page background as they approach the
+ * intro copy. GSAP drives the travel (`initHeroReel` in scripts/animations.ts);
+ * the fade is the `.hero-reel-mask` class in global.css.
+ *
+ * Each row carries its own product — Helical along the top, Simple Trivia along
+ * the bottom (`heroReelRows` in data/screenshots.ts). Two distinct sets, so the
+ * rows never show the same frame at once and each reads as one product's story.
+ *
+ * Two things here exist specifically to serve the animation:
+ *
+ *  1. Each row renders its card set TWICE. That is what makes the loop
+ *     seamless — translating a double-width track by exactly -50% lands the
+ *     duplicate where the original started, with no jump to hide. Doing it in
+ *     the template rather than by cloning nodes at runtime also means the
+ *     no-JS render is identical to the animated one.
+ *  2. Rows are fixed-width cards in a `w-max` flex track, so a row's measured
+ *     width never changes with the viewport and the tween never needs
+ *     recalculating on resize.
+ *
+ * Per the motion contract in scripts/animations.ts, nothing here starts hidden:
+ * with JavaScript off this is a static strip of screenshots, fully painted.
+ */
+import { Image } from 'astro:assets';
+
+import { heroReelRows } from '../data/screenshots.ts';
+
+/**
+ * Travel speeds, in `heroReelRows` order. The lower row trails the upper one so
+ * the two never scan as a single block sliding sideways; it also means the pair
+ * of rows never repeats as a unit, since the offset between them keeps moving.
+ */
+const rowSpeeds = [1, 0.72];
+
+/**
+ * Each row now loops over one product's screens rather than all of them, so a
+ * set can be narrower than the visible strip — which would show as a gap at the
+ * wrap on a wide viewport. Repeating a short set up to this many cards closes
+ * that without touching the animation contract: what gets rendered twice below
+ * is whatever the set ends up being, so -50% is still exactly one set.
+ */
+const MIN_CARDS_PER_SET = 6;
+
+const rows = heroReelRows
+  // A product with no screenshots yet would otherwise divide by zero here.
+  .filter((shots) => shots.length > 0)
+  .map((shots, index) => ({
+    shots: Array.from(
+      { length: Math.ceil(MIN_CARDS_PER_SET / shots.length) },
+      () => shots
+    ).flat(),
+    speed: rowSpeeds[index] ?? 1,
+  }));
+---
+
+{
+  /*
+    aria-hidden, and every alt is empty: this is decoration. Both products are
+    described in full in the Projects section below, and the doubled card set
+    would otherwise announce every frame twice.
+  */
+}
+<div
+  data-animate="hero-reel"
+  aria-hidden="true"
+  class="hidden lg:block lg:mr-[calc(50%-50vw)]"
+>
+  <div class="hero-reel-mask overflow-hidden py-2">
+    <div class="flex flex-col gap-5">
+      {
+        rows.map((row) => (
+          <div
+            data-animate="hero-reel-row"
+            data-speed={row.speed}
+            class="flex w-max gap-5"
+          >
+            {[...row.shots, ...row.shots].map((shot) => (
+              <figure class="w-[340px] shrink-0 overflow-hidden rounded-xl border border-border bg-surface">
+                <Image
+                  src={shot.src}
+                  alt=""
+                  widths={[340, 680]}
+                  sizes="340px"
+                  loading="eager"
+                  decoding="async"
+                  class="block h-auto w-full"
+                />
+              </figure>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

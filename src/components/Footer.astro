@@ -1,0 +1,60 @@
+---
+/**
+ * Site footer. The email address is the primary call to action.
+ * No phone number is rendered here or anywhere else on the site.
+ */
+import { site, primaryLinks } from '../data/site.ts';
+
+const year = new Date().getFullYear();
+---
+
+<footer
+  data-animate="footer"
+  class="border-t border-border bg-surface px-5 py-20 sm:px-8 sm:py-24"
+>
+  <div class="mx-auto max-w-6xl">
+    <p class="text-xs font-medium tracking-[0.2em] text-accent uppercase">
+      Get in touch
+    </p>
+
+    <p class="mt-5">
+      <a
+        href={site.links.email.href}
+        class="display-md inline-block break-words text-text transition-colors hover:text-accent"
+      >
+        {site.email}
+      </a>
+    </p>
+
+    <ul class="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-sm sm:text-base">
+      {
+        primaryLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
+              class="text-muted transition-colors hover:text-accent"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div
+      class="mt-12 flex flex-col gap-2 border-t border-border pt-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>&#169; {year} {site.name} &middot; {site.location}</p>
+      <p>
+        Built with <a
+          href="https://astro.build"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-text transition-colors hover:text-accent">Astro</a
+        >
+      </p>
+    </div>
+  </div>
+</footer>

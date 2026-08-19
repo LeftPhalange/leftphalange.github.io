@@ -29,47 +29,6 @@
 }
 
 @layer base {
-  /*
-    Height of the fixed nav, mirroring components/Nav.astro: the mark, plus that
-    row's vertical padding, plus the bottom hairline. The sticky section labels
-    offset themselves by it so they come to rest just clear of the bar rather
-    than sliding under it.
-
-    A constant because the nav's height is a design decision, not a measured
-    one — but it does have to be kept in step if Nav.astro's padding or mark
-    size changes.
-  */
-  :root {
-    --nav-h: 3.3125rem; /* 28px mark + 2 x 0.75rem padding + 1px border */
-  }
-
-  @media (width >= 40rem) {
-    :root {
-      --nav-h: 4.0625rem; /* 32px mark + 2 x 1rem padding + 1px border */
-    }
-  }
-
-  /*
-    Where a sticky section heading comes to rest (see SectionHeading.astro).
-
-    Normally the nav's height, so the heading parks directly under the bar. But
-    the nav retracts on scroll down (`initNav` in scripts/animations.ts), and a
-    heading left parked at --nav-h would then hang below an empty strip with
-    content scrolling through it. initNav marks <html> as it goes, and the
-    offset drops to zero so the heading rides up with the bar and takes its
-    place at the top of the viewport.
-
-    With JavaScript off the class is never added and the nav never moves, so
-    this stays at --nav-h — the correct resting state either way.
-  */
-  :root {
-    --nav-offset: var(--nav-h);
-  }
-
-  :root.nav-hidden {
-    --nav-offset: 0px;
-  }
-
   html {
     scroll-behavior: smooth;
   }

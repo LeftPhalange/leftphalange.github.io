@@ -32,7 +32,7 @@
   The reel and the showcase are alternative treatments of the same screenshots;
   data/heroVisual.ts picks one, so exactly one set of those hooks is on the page
   at `lg` and up, and neither below it.
-  section-heading       7      SectionHeading title or lede   scroll-triggered reveal
+  section-heading       5      SectionHeading title + lede    scroll-triggered reveal
   timeline-rail         1      hairline rail in WorkTimeline  scaleY draw on scroll
   work-entry            2      each <li> role in the timeline scroll-triggered reveal
   work-node             2      dot on the rail per entry      pop-in with its entry
@@ -44,10 +44,10 @@
 
   Section anchor ids (must stay in sync with Nav): #work, #projects, #skills.
 
-  Those three headings are rendered with `sticky`, which pins the <h2> below the
-  nav for the length of the section and detaches the lede into its own block.
-  That splits one heading into two `section-heading` hooks, which is why the
-  count above is 7 rather than 5 — see SectionHeading.astro.
+  Those three ids are also what the nav highlights: scripts/navHighlight.ts
+  watches each of these sections and marks the matching nav link `aria-current`
+  while it is the one in view. A section renamed here without its Nav entry
+  simply stops highlighting — nothing throws.
 */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
@@ -70,36 +70,34 @@ const description =
   <section
     id="work"
     aria-label="Work experience"
-    class="scroll-mt-28 border-t border-border py-24 sm:py-32"
+    class="scroll-mt-28 border-t border-border px-5 py-24 sm:px-8 sm:py-32"
   >
-    <SectionHeading
-      title="Work"
-      lede="Six years shipping production software, from clinical platforms to network automation for Fortune 500 infrastructure."
-      sticky
-    />
+    <div class="mx-auto max-w-6xl">
+      <SectionHeading
+        title="Work"
+        lede="Six years shipping production software, from clinical platforms to network automation for Fortune 500 infrastructure."
+      />
 
-    <div class="mx-auto max-w-6xl px-5 sm:px-8">
       <WorkTimeline />
     </div>
   </section>
 
   {/*
-    The section, not the inner wrapper, carries the top border and padding: the
-    sticky heading has to be a direct child of the section to stay stuck for the
-    whole run of panels, and it cannot sit above the rule that opens the
-    section. Side effect worth knowing about — that hairline is now full-bleed,
-    matching every other section instead of stopping at the container.
+    The section carries the hairline and the top padding but no horizontal
+    padding: the panels below are full-bleed, so the heading gets the container
+    to itself and the rule stays edge to edge like every other section.
   */}
   <section
     id="projects"
     aria-label="Projects"
     class="scroll-mt-28 border-t border-border pt-24 sm:pt-32"
   >
-    <SectionHeading
-      title="Projects"
-      lede="Things I designed, built, and run end to end."
-      sticky
-    />
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <SectionHeading
+        title="Projects"
+        lede="Things I designed, built, and run end to end."
+      />
+    </div>
 
     {/* The panels are full-bleed, so the gap below the lede lives on a wrapper
         here rather than as section padding — section padding would land after
@@ -126,11 +124,10 @@ const description =
   <section
     id="skills"
     aria-label="Skills"
-    class="scroll-mt-28 border-t border-border py-24 sm:py-32"
+    class="scroll-mt-28 border-t border-border px-5 py-24 sm:px-8 sm:py-32"
   >
-    <SectionHeading title="Skills" sticky />
-
-    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+    <div class="mx-auto max-w-6xl">
+      <SectionHeading title="Skills" />
       <Skills />
     </div>
   </section>

@@ -51,14 +51,19 @@ const ogImage = new URL('/og.png', Astro.site);
     <Footer />
 
     {/*
-      All GSAP motion. Astro bundles this script, compiles the TypeScript, and
-      emits it as `type="module"` (therefore deferred), once per page — so it
-      runs after the document is parsed and never blocks rendering.
+      All client behaviour. Astro bundles this script, compiles the TypeScript,
+      and emits it as `type="module"` (therefore deferred), once per page — so
+      it runs after the document is parsed and never blocks rendering.
 
-      Nothing on the page depends on it: every start state is applied at
-      runtime, and the script no-ops entirely under prefers-reduced-motion.
+      Nothing on the page depends on either module: every animation start state
+      is applied at runtime and no-ops entirely under prefers-reduced-motion,
+      and the nav highlight only adds `aria-current` to a link that already
+      works without it. The highlight is imported first, and separately from the
+      motion, because it is the one piece here that must still run for a reader
+      who has asked for no animation.
     */}
     <script>
+      import '../scripts/navHighlight.ts';
       import '../scripts/animations.ts';
     </script>
   </body>

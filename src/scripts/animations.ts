@@ -281,36 +281,26 @@ function startWave(wave: HTMLElement, delay: number): gsap.core.Timeline {
  * ------------------------------------------------------------------ */
 
 function initNav(): void {
-  const nav = one('nav');
+  /**
+   * The fixed rail, not the pill inside it. The bar floats below the top edge
+   * of the viewport (components/Nav.astro), and the rail is the element whose
+   * box starts at the very top — so -100% of *its* height is what carries the
+   * pill and the gap above it fully off screen.
+   */
+  const nav = one('#site-nav');
   if (!nav) return;
 
   let hidden = false;
 
-  /**
-   * Marks the document while the bar is away, so the sticky section headings
-   * can close the strip it leaves behind — `--nav-offset` in styles/global.css
-   * reads this class and the headings transition between the two positions,
-   * travelling with the nav instead of hanging below a gap.
-   *
-   * A class on <html> rather than a style written from here: the offsets then
-   * live entirely in the stylesheet, and with JavaScript off the class is never
-   * added, which is the correct resting state for a nav that never moves.
-   */
-  const markDocument = (): void => {
-    document.documentElement.classList.toggle('nav-hidden', hidden);
-  };
-
   const show = (): void => {
     if (!hidden) return;
     hidden = false;
-    markDocument();
     gsap.to(nav, { yPercent: 0, duration: 0.35, ease: 'power2.out', overwrite: true });
   };
 
   const hide = (): void => {
     if (hidden) return;
     hidden = true;
-    markDocument();
     gsap.to(nav, { yPercent: -100, duration: 0.35, ease: 'power2.in', overwrite: true });
   };
 
